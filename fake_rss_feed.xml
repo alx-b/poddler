@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+xmlns:rawvoice="http://www.rawvoice.com/rawvoiceRssModule/"
+xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+>
+<channel>
+	<title>Channel/Podcast Title</title>
+	<atom:link href="https://podnetwork.com/shows/podcast-title/feed/podcast/" rel="self" type="application/rss+xml" />
+	<link>https://podnetwork.com/podcasts/podecast-title/</link>
+	<description>Channel Description</description>
+	<lastBuildDate>Fri, 25 Dec 2020 09:00:35 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+		<generator>https://wordpress.org/?v=5.5.3</generator>
+<image>
+	<url>https://podnetwork.com/wp-content/uploads/2019/10/crop-Logos_400square-32x32.png</url>
+	<title>Podcast Title</title>
+	<link>https://podnetwork.com/podcasts/podcast-title/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<atom:link rel="hub" href="https://pubsubhub.app.com/" />
+	<itunes:summary><![CDATA[itunes summary]]></itunes:summary>
+	<itunes:author>Some One / Pod Network</itunes:author>
+	<itunes:explicit>yes</itunes:explicit>
+	<itunes:image href="https://podnetwork.com/wp-content/uploads/2020/09/PodcastTitle_3000x3000.jpg" />
+	<itunes:type>serial</itunes:type>
+	<itunes:owner>
+		<itunes:name>Some One / Pod Network</itunes:name>
+		<itunes:email>podnetwork@rb.bob.com</itunes:email>
+	</itunes:owner>
+	<managingEditor>podnetwork@rb.bob.com (Some One / Pod Network)</managingEditor>
+	<copyright>&#xA9; Copyright Some One</copyright>
+	<itunes:subtitle>Podcast sub-title</itunes:subtitle>
+	<image>
+		<title>Podcast Title</title>
+		<url>https://podnetwork.com/wp-content/uploads/2020/09/PodcastTitle_2000x2000.jpg</url>
+		<link>https://podnetwork.com/podcasts/podcast-title/</link>
+	</image>
+	<itunes:category text="Fiction">
+		<itunes:category text="Drama" />
+	</itunes:category>
+	<googleplay:category text="Society &amp; Culture"/>
+	<itunes:category text="Comedy" />
+	<itunes:category text="Society &amp; Culture" />
+	<rawvoice:location>Podcast Title</rawvoice:location>
+	<rawvoice:frequency>Weekly</rawvoice:frequency>
+	<item>
+		<title>2: EPISODE TITLE</title>
+		<link>https://podnetwork.com/2020/12/18/episode-title/</link>
+		<pubDate>Fri, 18 Dec 2019 05:00:43 +0000</pubDate>
+		<guid isPermaLink="false">http://podnetwork.com/?p=2775</guid>
+		<description>Episode description</description>
+		<content:encoded><![CDATA[<p>Episode description content encoded</p>]]></content:encoded>
+		<enclosure url="https://url-to-episode2.mp3" length="50270833" type="audio/mpeg" />
+		<itunes:subtitle>itunes subtitle</itunes:subtitle>
+		<itunes:summary><![CDATA[itunes summary]]></itunes:summary>
+		<itunes:author>Some One / Pod Network</itunes:author>
+		<itunes:duration>20:00</itunes:duration>
+		</item>
+	<item>
+		<title>1: EPISODE TITLE</title>
+		<link>https://podnetwork.com/2020/09/28/1-title/</link>
+		<pubDate>Mon, 28 Sep 2019 08:00:18 +0000</pubDate>
+		<guid isPermaLink="false">http://podnetwork.com/?p=2321</guid>
+		<description>episode 1 description</description>
+		<enclosure url="https://url-to-episode1.mp3" length="48970827" type="audio/mpeg" />
+		<itunes:subtitle>itunes subtitle ep1</itunes:subtitle>
+		<itunes:summary><![CDATA[itunes summary ep1]]></itunes:summary>
+		<itunes:author>Some One / Pod Network</itunes:author>
+		<itunes:season>1</itunes:season>
+		<itunes:episode>1</itunes:episode>
+		<itunes:title>EPISODE TITLE</itunes:title>
+		<itunes:duration>32:00</itunes:duration>
+		</item>
+</channel>
+</rss>
