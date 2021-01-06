@@ -67,12 +67,24 @@ def get_episodes_title(items) -> List[str]:
     return [item["title"] for item in items]
 
 
+def get_an_episode_title(item) -> str:
+    return item["title"]
+
+
 def get_episodes_date(items) -> List[str]:
     return [item.published for item in items]
 
 
+def get_an_episode_date(item) -> List[str]:
+    return item.published
+
+
 def get_entries_enclosures(items) -> List[List]:
     return [item.enclosures for item in items]
+
+
+def get_entry_enclosure(item) -> List:
+    return item.enclosures
 
 
 def is_audio_url(item) -> bool:
@@ -87,5 +99,5 @@ def flatten_iterable(enclosures) -> itertools.chain:
     return itertools.chain.from_iterable(enclosures)
 
 
-def get_audio_urls(flat_iterable) -> List[str]:
-    return [item.href for item in flat_iterable if is_audio_url(item)]
+def get_audio_urls(iterable) -> List[str]:
+    return [item.href for item in iterable if is_audio_url(item)]

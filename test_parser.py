@@ -69,12 +69,22 @@ def test_get_episodes_title(parsed_url):
     ]
 
 
+def test_get_an_episode_title(parsed_url):
+    items = parser.get_items(parsed_url)
+    assert parser.get_an_episode_title(items[0]) == "2: EPISODE TITLE"
+
+
 def test_get_episodes_date(parsed_url):
     items = parser.get_items(parsed_url)
     assert parser.get_episodes_date(items) == [
         "Fri, 18 Dec 2019 05:00:43 +0000",
         "Mon, 28 Sep 2019 08:00:18 +0000",
     ]
+
+
+def test_get_episode_date(parsed_url):
+    items = parser.get_items(parsed_url)
+    assert parser.get_an_episode_date(items[0]) == "Fri, 18 Dec 2019 05:00:43 +0000"
 
 
 def test_get_entries_enclosures(parsed_url):
@@ -94,6 +104,17 @@ def test_get_entries_enclosures(parsed_url):
                 "href": "https://url-to-episode1.mp3",
             }
         ],
+    ]
+
+
+def test_get_entry_enclosures(parsed_url):
+    items = parser.get_items(parsed_url)
+    assert parser.get_entry_enclosure(items[0]) == [
+        {
+            "length": "50270833",
+            "type": "audio/mpeg",
+            "href": "https://url-to-episode2.mp3",
+        }
     ]
 
 
