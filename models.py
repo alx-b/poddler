@@ -16,7 +16,7 @@ class PodcastOut:
 
 @dataclass
 class Episode:
-    podcast_id: int
+    # podcast_id: int
     number: int
     title: str
     url: str
