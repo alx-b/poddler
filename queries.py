@@ -59,7 +59,7 @@ def update_a_podcast_url_by_title(database, title, new_url) -> None:
 
 def delete_a_podcast_by_title(database, title) -> None:
     db, cursor = database
-    cursor.execute("DELETE FROM podcasts WHERE title=?", title)
+    cursor.execute("DELETE FROM podcasts WHERE title=?", (title,))
     db.commit()
 
 
