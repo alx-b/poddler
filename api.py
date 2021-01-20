@@ -1,6 +1,7 @@
 import parser
 import queries
 import models
+import downloader
 
 
 def get_all_podcasts():
@@ -23,12 +24,15 @@ def episode_has_audio_url(episode):
 
 
 def get_all_episodes_from_feed(url):
+    parsed_url = parser.get_parsed_url(url)
+    pod_title = parser.get_podcast_title(parsed_url)
     episodes = parser.get_items(parser.get_parsed_url(url))
     obj_episodes = []
     for episode in episodes:
         if episode_has_audio_url(episode):
             obj_episodes.append(
                 models.Episode(
+                    podcast_title=pod_title,
                     number=None,
                     title=parser.get_an_episode_title(episode),
                     # Gives a list with only 1 string value
@@ -41,3 +45,11 @@ def get_all_episodes_from_feed(url):
         ep.number = idx
 
     return obj_episodes
+
+
+def download_episode(episode):
+    downloader.download_file(episode)
+
+
+def get_podcast_and_its_episode_from_title(podcast_title):
+    return get_all_episodes_from_feed(get_a_podcast_by_title(podcast_title).url)
