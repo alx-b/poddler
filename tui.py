@@ -81,7 +81,7 @@ class AppForm(npyscreen.Form):
         #    )
         #    self.box4.display()
         self.box3.values = []
-            self.box3.display()
+        self.box3.display()
 
     def download_concurrently(self):
         episodes = self.box3.values
