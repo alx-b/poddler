@@ -1,7 +1,8 @@
 import pytest
 import sqlite3
-import queries
-import models
+
+from .. import queries
+from .. import models
 
 
 @pytest.fixture(scope="session")

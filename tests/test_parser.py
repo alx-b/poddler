@@ -3,9 +3,18 @@ import feedparser
 from feedparser.util import FeedParserDict
 import pathlib
 
-import parser
+from .. import parser
 
-FEED_URL = f"{pathlib.Path.cwd()}/fake_rss_feed.xml"
+# FEED_URL = f"{pathlib.Path.cwd()}/fake_rss_feed.xml"
+
+
+def get_path():
+    path = f"{pathlib.Path.cwd()}/fake_rss_feed.xml"
+    path2 = f"{pathlib.Path.cwd()}/tests/fake_rss_feed.xml"
+    return path if pathlib.Path(path).exists() else path2
+
+
+FEED_URL = get_path()
 
 
 @pytest.fixture(scope="session")
