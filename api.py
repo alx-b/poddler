@@ -49,6 +49,7 @@ def get_all_episodes_from_feed(url):
 
 def download_episode(episode):
     downloader.download_file(episode)
+    return f"Download completed: {episode.title}"
 
 
 def get_podcast_and_its_episode_from_title(podcast_title):

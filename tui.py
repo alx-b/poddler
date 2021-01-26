@@ -19,7 +19,6 @@ class AppForm(npyscreen.Form):
 
         self.box = self.add(BoxOneChoice, height=20)
         self.box2 = self.add(BoxMultiChoice, height=20)
-        # contained_widget=npyscreen.MultiLine,
         self.box3 = self.add(BoxMultiLine, height=20)
         self.box4 = self.add(BoxMultiLine, height=10)
         self.box4.name = "Status"
@@ -68,11 +67,18 @@ class AppForm(npyscreen.Form):
 
     def download_concurrently(self):
         episodes = self.box3.values
-        self.box4.values.append("start")
-        self.box4.display()
         with concurrent.futures.ThreadPoolExecutor() as tpexec:
-            tpexec.map(api.download_episode, episodes)
-        self.box4.values.append("end")
+            # Use .submit with list comprehension instead of .map,
+            # else you get result in starting order
+            downloads = [tpexec.submit(api.download_episode, ep) for ep in episodes]
+            for episode in episodes:
+                self.box4.values.append(f"Download started: {episode.title}")
+            self.box4.display()
+
+            for download in concurrent.futures.as_completed(downloads):
+                self.box4.values.append(download.result())
+                self.box4.display()
+
         self.box4.display()
 
     def delete_selected_podcast(self, *args):
