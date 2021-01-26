@@ -53,3 +53,7 @@ def download_episode(episode):
 
 def get_podcast_and_its_episode_from_title(podcast_title):
     return get_all_episodes_from_feed(get_a_podcast_by_title(podcast_title).url)
+
+
+def delete_a_podcast_by_title(title):
+    queries.delete_a_podcast_by_title(queries.open_db(), title)

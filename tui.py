@@ -1,7 +1,7 @@
 # import curses
-import npyscreen
 import concurrent.futures
 import threading
+import npyscreen
 
 import api
 
@@ -19,14 +19,8 @@ class AppForm(npyscreen.Form):
 
         self.box = self.add(BoxOneChoice, height=20)
         self.box2 = self.add(BoxMultiChoice, height=20)
-
-        self.box3 = self.add(
-            BoxMultiLine,
-            height=20,
-            # contained_widget=npyscreen.MultiLine,
-            # contained_widget_arguments={"values": ["fffff", "aaaa"]},
-        )
-
+        # contained_widget=npyscreen.MultiLine,
+        self.box3 = self.add(BoxMultiLine, height=20)
         self.box4 = self.add(BoxMultiLine, height=10)
         self.box4.name = "Status"
 
@@ -35,6 +29,7 @@ class AppForm(npyscreen.Form):
         self.box.entry_widget.add_handlers({"^A": self.get_episode_list})
         self.box2.entry_widget.add_handlers({"^A": self.episode_to_download})
         self.box3.entry_widget.add_handlers({"^A": self.download_episodes})
+        self.box.entry_widget.add_handlers({"^D": self.delete_selected_podcast})
 
         self.episodes_to_dl = []
 
@@ -55,8 +50,6 @@ class AppForm(npyscreen.Form):
         self.box2.value = []
         pod_title = self.box.entry_widget.get_selected_objects()[0]
         episodes = api.get_podcast_and_its_episode_from_title(pod_title)
-        # ep_info = [(ep.number, ep.title, ep.date) for ep in all_episodes]
-        # self.box2.values = ep_info
         self.box2.values = episodes
         self.box2.display()
 
@@ -70,16 +63,6 @@ class AppForm(npyscreen.Form):
         self.episodes_to_dl = []
         thread1 = threading.Thread(target=self.download_concurrently, daemon=True)
         thread1.start()
-        # for episode in episodes:
-        #    self.box4.values.append(
-        #        f"{episode.number}: {episode.title} - is downloading."
-        #    )
-        #    self.box4.display()
-        #    api.download_episode(episode)
-        #    self.box4.values.append(
-        #        f"{episode.number}: {episode.title} - is downloaded."
-        #    )
-        #    self.box4.display()
         self.box3.values = []
         self.box3.display()
 
@@ -91,6 +74,12 @@ class AppForm(npyscreen.Form):
             tpexec.map(api.download_episode, episodes)
         self.box4.values.append("end")
         self.box4.display()
+
+    def delete_selected_podcast(self, *args):
+        pod_title = self.box.entry_widget.get_selected_objects()[0]
+        api.delete_a_podcast_by_title(pod_title)
+        self.box.value = []
+        self.get_podcast_list()
 
 
 class TextField(npyscreen.TitleText):
@@ -111,7 +100,6 @@ class MultiChoice(npyscreen.MultiSelect):
 class MultiLine(npyscreen.MultiLine):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.values = ["fake", "value"]
 
 
 class BoxTextField(npyscreen.BoxTitle):
