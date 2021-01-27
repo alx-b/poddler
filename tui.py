@@ -1,6 +1,7 @@
 # import curses
 import concurrent.futures
 import threading
+import urllib
 import npyscreen
 
 import api
@@ -37,7 +38,16 @@ class AppForm(npyscreen.Form):
     def get_info(self, *args):
         url = self.entry.value
         self.entry.value = ""
-        api.get_podcast_info_and_save_to_database(url)
+
+        try:
+            api.get_podcast_info_and_save_to_database(url)
+        except AttributeError:
+            self.box4.values.append("Not an URL!")
+        except urllib.error.URLError:
+            self.box4.values.append("Invalid URL")
+
+        self.box4.display()
+
         self.get_podcast_list()
 
     def get_podcast_list(self, *args):
@@ -46,17 +56,25 @@ class AppForm(npyscreen.Form):
         self.box.display()
 
     def get_episode_list(self, *args):
+        try:
+            pod_title = self.box.entry_widget.get_selected_objects()[0]
+            episodes = api.get_podcast_and_its_episode_from_title(pod_title)
+            self.box2.values = episodes
+            self.box2.display()
+        except IndexError:
+            self.box4.values.append("You haven't select a podcast!")
+            self.box4.display()
         self.box2.value = []
-        pod_title = self.box.entry_widget.get_selected_objects()[0]
-        episodes = api.get_podcast_and_its_episode_from_title(pod_title)
-        self.box2.values = episodes
-        self.box2.display()
 
     def episode_to_download(self, *args):
-        self.episodes_to_dl += self.box2.entry_widget.get_selected_objects()
+        try:
+            self.episodes_to_dl += self.box2.entry_widget.get_selected_objects()
+            self.box3.values = self.episodes_to_dl
+            self.box3.display()
+        except TypeError:
+            self.box4.values.append("You haven't select an episode!")
+            self.box4.display()
         self.box2.value = []
-        self.box3.values = self.episodes_to_dl
-        self.box3.display()
 
     def download_episodes(self, *args):
         self.episodes_to_dl = []
@@ -82,8 +100,13 @@ class AppForm(npyscreen.Form):
         self.box4.display()
 
     def delete_selected_podcast(self, *args):
-        pod_title = self.box.entry_widget.get_selected_objects()[0]
-        api.delete_a_podcast_by_title(pod_title)
+        try:
+            pod_title = self.box.entry_widget.get_selected_objects()[0]
+            api.delete_a_podcast_by_title(pod_title)
+        except IndexError:
+            self.box4.values.append("You haven't select a podcast!")
+            self.box4.display()
+
         self.box.value = []
         self.get_podcast_list()
 
