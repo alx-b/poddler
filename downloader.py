@@ -1,3 +1,4 @@
+import re
 import httpx
 from pathlib import Path
 
@@ -12,9 +13,14 @@ def get_extension(text):
     return text[text.rfind(".") : text.rfind(".") + 4]
 
 
+def replace_invalid_char_and_space(text):
+    new_text = re.sub("[/\\:*?\"'<>|’‘ ]", "_", text)
+    return new_text
+
+
 def download_file(episode):
-    pod_title = episode.podcast_title.replace(" ", "_")
-    ep_title = episode.title.replace(" ", "_")
+    pod_title = replace_invalid_char_and_space(episode.podcast_title)
+    ep_title = replace_invalid_char_and_space(episode.title)
     ext = get_extension(episode.url)
 
     create_podcast_folder(pod_title)
