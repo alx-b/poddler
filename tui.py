@@ -4,7 +4,7 @@ import threading
 import urllib
 import npyscreen
 
-import api
+import handler
 
 
 class AppForm(npyscreen.Form):
@@ -12,102 +12,114 @@ class AppForm(npyscreen.Form):
         self.parentApp.setNextForm(None)
 
     def create(self):
-        self.entry = self.add(
+        # Widgets:
+        self.url = self.add(
             BoxTextField,
             height=3,
             contained_widget_arguments={"name": "url:"},
         )
-
-        self.box = self.add(BoxOneChoice, height=20)
-        self.box2 = self.add(BoxMultiChoice, height=20)
-        self.box3 = self.add(BoxMultiLine, height=20)
-        self.box4 = self.add(BoxMultiLine, height=10)
-        self.box4.name = "Status"
+        self.podcast = self.add(BoxOneChoice, height=20)
+        self.episode = self.add(BoxMultiChoice, height=20)
+        #self.download = self.add(BoxMultiLine, height=20, name="To Download")
+        self.status = self.add(BoxMultiLine, height=10, name="Status")
 
         # Keybindings:
-        self.entry.entry_widget.add_handlers({"^A": self.get_info})
-        self.box.entry_widget.add_handlers({"^A": self.get_episode_list})
-        self.box2.entry_widget.add_handlers({"^A": self.episode_to_download})
-        self.box3.entry_widget.add_handlers({"^A": self.download_episodes})
-        self.box.entry_widget.add_handlers({"^D": self.delete_selected_podcast})
+        self.url.entry_widget.add_handlers({"^A": self.get_info})
+        self.podcast.entry_widget.add_handlers({"^A": self.get_episode_list})
+        self.episode.entry_widget.add_handlers({"^A": self.download_episodes2})
+        #self.episode.entry_widget.add_handlers({"^A": self.episode_to_download})
+        #self.download.entry_widget.add_handlers({"^A": self.download_episodes})
+        self.podcast.entry_widget.add_handlers({"^D": self.delete_selected_podcast})
+
+        self.to_download = None
 
         self.episodes_to_dl = []
 
         self.get_podcast_list()
 
     def get_info(self, *args):
-        url = self.entry.value
-        self.entry.value = ""
+        url = self.url.value
+        self.url.value = ""
 
         try:
-            api.get_podcast_info_and_save_to_database(url)
+            handler.get_podcast_info_and_save_to_database(url)
         except AttributeError:
-            self.box4.values.append("Not an URL!")
+            self.status.values.append("Not an URL!")
         except urllib.error.URLError:
-            self.box4.values.append("Invalid URL")
+            self.status.values.append("Invalid URL")
 
-        self.box4.display()
+        self.status.display()
 
         self.get_podcast_list()
 
     def get_podcast_list(self, *args):
-        podcasts = api.get_all_podcasts()
-        self.box.values = [podcast.title for podcast in podcasts]
-        self.box.display()
+        podcasts = handler.get_all_podcasts()
+        self.podcast.values = [podcast.title for podcast in podcasts]
+        self.podcast.display()
 
     def get_episode_list(self, *args):
         try:
-            pod_title = self.box.entry_widget.get_selected_objects()[0]
-            episodes = api.get_podcast_and_its_episode_from_title(pod_title)
-            self.box2.values = episodes
-            self.box2.display()
+            pod_title = self.podcast.entry_widget.get_selected_objects()[0]
+            episodes = handler.get_podcast_and_its_episode_from_title(pod_title)
+            self.episode.values = episodes
+            self.episode.display()
         except IndexError:
-            self.box4.values.append("You haven't select a podcast!")
-            self.box4.display()
-        self.box2.value = []
+            self.status.values.append("You haven't select a podcast!")
+            self.status.display()
+        self.episode.value = []
 
-    def episode_to_download(self, *args):
-        try:
-            self.episodes_to_dl += self.box2.entry_widget.get_selected_objects()
-            self.box3.values = self.episodes_to_dl
-            self.box3.display()
-        except TypeError:
-            self.box4.values.append("You haven't select an episode!")
-            self.box4.display()
-        self.box2.value = []
+    #def episode_to_download(self, *args):
+    #    try:
+    #        self.episodes_to_dl += self.episode.entry_widget.get_selected_objects()
+    #        self.download.values = self.episodes_to_dl
+    #        self.download.display()
+    #    except TypeError:
+    #        self.status.values.append("You haven't select an episode!")
+    #        self.status.display()
+    #    self.episode.value = []
+
+    def download_episodes2(self, *args):
+        #self.download.values = self.episode.entry_widget.get_selected_objects()
+        self.to_download = self.episode.entry_widget.get_selected_objects()
+        thread1 = threading.Thread(target=self.download_concurrently, daemon=True)
+        thread1.start()
+        self.episode.value = []
+        self.episode.display()
+        
 
     def download_episodes(self, *args):
         self.episodes_to_dl = []
         thread1 = threading.Thread(target=self.download_concurrently, daemon=True)
         thread1.start()
-        self.box3.values = []
-        self.box3.display()
+        #self.download.values = []
+        #self.download.display()
 
     def download_concurrently(self):
-        episodes = self.box3.values
+        #episodes = self.download.values
+        episodes = self.to_download
         with concurrent.futures.ThreadPoolExecutor() as tpexec:
             # Use .submit with list comprehension instead of .map,
             # else you get result in starting order
-            downloads = [tpexec.submit(api.download_episode, ep) for ep in episodes]
+            downloads = [tpexec.submit(handler.download_episode, ep) for ep in episodes]
             for episode in episodes:
-                self.box4.values.append(f"Download started: {episode.title}")
-            self.box4.display()
+                self.status.values.append(f"Download started: {episode.title}")
+            self.status.display()
 
             for download in concurrent.futures.as_completed(downloads):
-                self.box4.values.append(download.result())
-                self.box4.display()
+                self.status.values.append(download.result())
+                self.status.display()
 
-        self.box4.display()
+        self.status.display()
 
     def delete_selected_podcast(self, *args):
         try:
-            pod_title = self.box.entry_widget.get_selected_objects()[0]
-            api.delete_a_podcast_by_title(pod_title)
+            pod_title = self.podcast.entry_widget.get_selected_objects()[0]
+            handler.delete_a_podcast_by_title(pod_title)
         except IndexError:
-            self.box4.values.append("You haven't select a podcast!")
-            self.box4.display()
+            self.status.values.append("You haven't select a podcast!")
+            self.status.display()
 
-        self.box.value = []
+        self.podcast.value = []
         self.get_podcast_list()
 
 
@@ -148,7 +160,6 @@ class BoxMultiChoice(npyscreen.BoxTitle):
 
 class BoxMultiLine(npyscreen.BoxTitle):
     _contained_widget = MultiLine
-    name = "To Download"
 
 
 class Application(npyscreen.NPSAppManaged):
