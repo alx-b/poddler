@@ -33,8 +33,7 @@ Added keybinds:
 - Ctrl+a = Depending on selected block.
     * Add url to database.
     * Select podcast.
-    * Select episodes.
-    * Download episodes. 
+    * Select & Download episodes.
                 
 - Ctrl+d = on Podcast block, delete selected podcast from database.
 
