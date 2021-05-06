@@ -33,7 +33,7 @@ class AppForm(npyscreen.Form):
 
     def get_info(self, *args):
         try:
-            handler.get_podcast_info_and_save_to_database(self.url.get_url())
+            handler.get_podcast_info_and_save_to_database(self.url.value)
         except AttributeError:
             self.status.values.append("Not an URL!")
         except urllib.error.URLError:
@@ -93,25 +93,20 @@ class AppForm(npyscreen.Form):
         self.status.display()
 
 
-class Url(npyscreen.TitleText):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
 class BoxUrl(npyscreen.BoxTitle):
+    class Url(npyscreen.TitleText):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
     _contained_widget = Url
     name = "Add a New Feed"
 
-    def get_url(self):
-        return self.value
-
-
-class Podcast(npyscreen.SelectOne):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
 
 class BoxPodcast(npyscreen.BoxTitle):
+    class Podcast(npyscreen.SelectOne):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
     _contained_widget = Podcast
     name = "Podcasts"
 
@@ -125,22 +120,20 @@ class BoxPodcast(npyscreen.BoxTitle):
         self.display()
 
 
-class Episode(npyscreen.MultiSelect):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
 class BoxEpisode(npyscreen.BoxTitle):
+    class Episode(npyscreen.MultiSelect):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
     _contained_widget = Episode
     name = "Episodes"
 
 
-class Status(npyscreen.MultiLine):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
 class BoxStatus(npyscreen.BoxTitle):
+    class Status(npyscreen.MultiLine):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
     _contained_widget = Status
     name = "Status"
 
