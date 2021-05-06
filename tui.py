@@ -12,7 +12,9 @@ class AppForm(npyscreen.Form):
         self.parentApp.setNextForm(None)
 
 
-    def create(self):
+    def create(self) -> None:
+        """Initialization (equivalent to __init__)
+        """
         # Widgets:
         self.url = self.add(
             BoxUrl, height=3, contained_widget_arguments={"name": "url:"}
@@ -31,7 +33,12 @@ class AppForm(npyscreen.Form):
         self.podcast.get_podcast_list()
 
 
-    def get_info(self, *args):
+    def get_info(self, *args) -> None:
+        """Gets podcast info, saves to database, display podcasts
+
+        Parameters:
+            *args: Needed for keybinding
+        """
         try:
             handler.get_podcast_info_and_save_to_database(self.url.value)
         except AttributeError:
@@ -44,7 +51,12 @@ class AppForm(npyscreen.Form):
         self.podcast.get_podcast_list()
 
 
-    def get_episode_list(self, *args):
+    def get_episode_list(self, *args) -> None:
+        """Gets and display episodes of the selected podcast
+
+        Parameters:
+            *args: Needed for keybinding
+        """
         try:
             self.episode.values = handler.get_podcast_and_its_episode_from_title(
                 self.podcast.get_selected_podcast_title()
@@ -56,7 +68,12 @@ class AppForm(npyscreen.Form):
         self.episode.value = []
 
 
-    def delete_selected_podcast(self, *args):
+    def delete_selected_podcast(self, *args) -> None:
+        """Delete selected podcast and refresh podcast list
+
+        Parameters:
+            *args: Needed for keybinding
+        """
         try:
             handler.delete_a_podcast_by_title(
                 self.podcast.get_selected_podcast_title()
@@ -69,12 +86,16 @@ class AppForm(npyscreen.Form):
         self.podcast.get_podcast_list()
 
         
-    def download_episodes(self, *args):
-        thread1 = threading.Thread(target=self._download_concurrently, daemon=True)
-        thread1.start()
+    def download_episodes(self, *args) -> None:
+        """Start downloading thread
+
+        Parameters:
+            *args: Needed for keybinding
+        """
+        threading.Thread(target=self._download_concurrently, daemon=True).start()
         
 
-    def _download_concurrently(self):
+    def _download_concurrently(self) -> None:
         episodes = self.episode.entry_widget.get_selected_objects()
         self.episode.value = []
         self.episode.display()
