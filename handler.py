@@ -5,7 +5,7 @@ import downloader
 
 
 def get_all_podcasts():
-    podcasts = queries.get_all_podcasts(queries.open_db())
+    podcasts = sorted(queries.get_all_podcasts(queries.open_db()), key=lambda pod: pod[1])
     return [models.PodcastOut(pod[0], pod[1], pod[2]) for pod in podcasts]
 
 
