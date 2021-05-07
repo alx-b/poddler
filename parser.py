@@ -1,5 +1,5 @@
 from typing import List, Dict, Optional, Iterable
-import itertools
+# Third Party
 import feedparser
 from feedparser.util import FeedParserDict
 
@@ -60,7 +60,7 @@ def get_an_episode_date(item: FeedParserDict) -> List[str]:
     return item.published
 
 
-def get_entry_enclosure(item: FeedParserDict) -> List:
+def get_entry_enclosures(item: FeedParserDict) -> List:
     return item.enclosures
 
 

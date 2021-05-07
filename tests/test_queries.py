@@ -4,23 +4,25 @@ import sqlite3
 from .. import queries
 from .. import models
 
+#
+# Probably need to redo this !!!!!!!!
+# 
 
 @pytest.fixture(scope="session")
-def database():
+def db():
     with sqlite3.connect(":memory:") as db:
-        return (db, db.cursor())
+        return db
 
 
 @pytest.fixture(scope="session")
-def db_setup(database):
-    db, cursor = database
+def db_setup(db):
     db.execute(
         """CREATE TABLE IF NOT EXISTS podcasts (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           title TEXT,
           url TEXT UNIQUE)"""
     )
-    cursor.executemany(
+    db.cursor().executemany(
         "INSERT INTO podcasts(title, url) VALUES (?, ?)",
         [
             ("pod_title", "pod_url"),
@@ -31,52 +33,34 @@ def db_setup(database):
 
 
 @pytest.mark.usefixtures("db_setup")
-def test_get_all_podcasts(database):
-    assert queries.get_all_podcasts(database) == [
+def test_get_all_podcasts(db):
+    assert queries.get_all_podcasts(db) == [
         (1, "pod_title", "pod_url"),
         (2, "pod_title_2", "pod_url_2"),
     ]
 
 
-def test_get_a_podcast_by_title(database):
-    assert queries.get_a_podcast_by_title(database, "pod_title") == (
+def test_get_a_podcast_by_title(db):
+    assert queries.get_a_podcast_by_title(db, "pod_title") == (
         1,
         "pod_title",
         "pod_url",
     )
 
 
-def test_insert_into_podcast_table(database):
+def test_insert_into_podcast_table(db):
     pod = models.PodcastIn("pod_title_3", "pod_url_3")
-    queries.insert_into_podcast_table(database, pod)
-    assert queries.get_a_podcast_by_title(database, "pod_title_3") == (
+    queries.insert_into_podcast_table(db, pod)
+    assert queries.get_a_podcast_by_title(db, "pod_title_3") == (
         3,
         "pod_title_3",
         "pod_url_3",
     )
 
 
-def test_update_a_podcast_title_by_title(database):
-    queries.update_a_podcast_title_by_title(database, "pod_title_2", "new_pod_title_2")
-    assert queries.get_a_podcast_by_title(database, "new_pod_title_2") == (
-        2,
-        "new_pod_title_2",
-        "pod_url_2",
-    )
-
-
-def test_update_a_podcast_url_by_title(database):
-    queries.update_a_podcast_url_by_title(database, "pod_title", "new_pod_url")
-    assert queries.get_a_podcast_by_title(database, "pod_title") == (
-        1,
-        "pod_title",
-        "new_pod_url",
-    )
-
-
-def test_delete_a_podcast_by_title(database):
-    queries.delete_a_podcast_by_title(database, "pod_title")
-    assert queries.get_all_podcasts(database) == [
+def test_delete_a_podcast_by_title(db):
+    queries.delete_a_podcast_by_title(db, "pod_title")
+    assert queries.get_all_podcasts(db) == [
         (2, "new_pod_title_2", "pod_url_2"),
         (3, "pod_title_3", "pod_url_3"),
     ]
