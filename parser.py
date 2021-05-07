@@ -1,93 +1,70 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Iterable
 import itertools
 import feedparser
+from feedparser.util import FeedParserDict
 
 
-def has_no_bozo_error(parsed_url) -> bool:
+def _has_no_bozo_error(parsed_url: FeedParserDict) -> bool:
     return not bool(parsed_url.bozo)
 
 
-def has_entries(parsed_url) -> bool:
+def _has_entries(parsed_url: FeedParserDict) -> bool:
     return bool(parsed_url.entries)
 
 
-def has_a_version(parsed_url) -> bool:
+def _has_a_version(parsed_url: FeedParserDict) -> bool:
     return bool(parsed_url.version)
 
 
-def is_not_none(parsed_url) -> bool:
-    return bool(parsed_url is not None)
-
-
-def has_no_error(parsed_url) -> Optional[feedparser.util.FeedParserDict]:
+def _has_no_error(parsed_url: FeedParserDict) -> Optional[FeedParserDict]:
     if (
-        has_no_bozo_error(parsed_url)
-        and has_entries(parsed_url)
-        and has_a_version(parsed_url)
+        _has_no_bozo_error(parsed_url)
+        and _has_entries(parsed_url)
+        and _has_a_version(parsed_url)
     ):
         return parsed_url
     return None
 
 
-def get_parsed_url(url: str) -> Optional[feedparser.util.FeedParserDict]:
-    return has_no_error(feedparser.parse(url))
-
-
-def url_is_parsable(url: str) -> bool:
-    try:
-        return bool(feedparser.parse(url).version)
-    except AttributeError:
-        print("No version")
-    return False
+def get_parsed_url(url: str) -> Optional[FeedParserDict]:
+    return _has_no_error(feedparser.parse(url))
 
 
 # Podcast overall info
 
 
-def get_podcast_title(parsed_url) -> str:
+def get_podcast_title(parsed_url: FeedParserDict) -> str:
     return parsed_url.feed.title
 
 
-def get_podcast_description(parsed_url) -> str:
+def get_podcast_description(parsed_url: FeedParserDict) -> str:
     return parsed_url.feed.description
 
 
-def get_podcast_image_url(parsed_url) -> str:
+def get_podcast_image_url(parsed_url: FeedParserDict) -> str:
     return parsed_url.feed.image.url
 
 
 # Episode info
 
 
-def get_items(parsed_url) -> List[feedparser.util.FeedParserDict]:
+def get_items(parsed_url: FeedParserDict) -> List[FeedParserDict]:
     return parsed_url.entries
 
 
-def get_episodes_title(items) -> List[str]:
-    return [item["title"] for item in items]
-
-
-def get_an_episode_title(item) -> str:
+def get_an_episode_title(item: FeedParserDict) -> str:
     return item["title"]
 
 
-def get_episodes_date(items) -> List[str]:
-    return [item.published for item in items]
-
-
-def get_an_episode_date(item) -> List[str]:
+def get_an_episode_date(item: FeedParserDict) -> List[str]:
     return item.published
 
 
-def get_entries_enclosures(items) -> List[List]:
-    return [item.enclosures for item in items]
-
-
-def get_entry_enclosure(item) -> List:
+def get_entry_enclosure(item: FeedParserDict) -> List:
     return item.enclosures
 
 
-def is_audio_url(item) -> bool:
+def _is_audio_url(item: FeedParserDict) -> bool:
     try:
         return bool("audio" in item.type)
     except AttributeError:
@@ -95,9 +72,5 @@ def is_audio_url(item) -> bool:
     return False
 
 
-def flatten_iterable(enclosures) -> itertools.chain:
-    return itertools.chain.from_iterable(enclosures)
-
-
-def get_audio_urls(iterable) -> List[str]:
-    return [item.href for item in iterable if is_audio_url(item)]
+def get_audio_urls(iterable: Iterable) -> List[str]:
+    return [item.href for item in iterable if _is_audio_url(item)]
