@@ -5,8 +5,6 @@ import pathlib
 
 from .. import parser
 
-# FEED_URL = f"{pathlib.Path.cwd()}/fake_rss_feed.xml"
-
 
 def get_path():
     path = f"{pathlib.Path.cwd()}/fake_rss_feed.xml"
@@ -20,11 +18,6 @@ FEED_URL = get_path()
 @pytest.fixture(scope="session")
 def parsed_url():
     return feedparser.parse(FEED_URL)
-
-
-@pytest.mark.parametrize("url, result", [(FEED_URL, True), ("", False)])
-def test_url_is_parsable(url, result):
-    assert parser.url_is_parsable(url) is result
 
 
 def test_bozo_error(parsed_url):
@@ -49,17 +42,6 @@ def test_get_parsed_url(parsed_url):
 
 def test_get_podcast_title(parsed_url):
     assert parser.get_podcast_title(parsed_url) == "Channel/Podcast Title"
-
-
-def test_get_podcast_description(parsed_url):
-    assert parser.get_podcast_description(parsed_url) == "itunes summary"
-
-
-def test_get_podcast_image_url(parsed_url):
-    assert (
-        parser.get_podcast_image_url(parsed_url)
-        == "https://podnetwork.com/wp-content/uploads/2020/09/PodcastTitle_2000x2000.jpg"
-    )
 
 
 def test_get_items(parsed_url):
@@ -88,17 +70,13 @@ def test_get_entry_enclosures(parsed_url):
 
 
 def test_is_audio_url(parsed_url):
-    items = parser.get_items(parsed_url)
-    enclosures = parser.get_entries_enclosures(items)
-    iterable = list(parser.flatten_iterable(enclosures))
-    assert parser._is_audio_url(iterable[0]) is True
+    pass
 
 
 def test_get_audio_urls(parsed_url):
     items = parser.get_items(parsed_url)
-    enclosures = parser.get_entries_enclosures(items)
-    iterable = parser.flatten_iterable(enclosures)
-    assert parser.get_audio_urls(iterable) == [
+    item = items[0]
+    enclosures = parser.get_entry_enclosures(item)
+    assert parser.get_audio_urls(enclosures) == [
         "https://url-to-episode2.mp3",
-        "https://url-to-episode1.mp3",
     ]
