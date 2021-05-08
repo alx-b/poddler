@@ -40,14 +40,16 @@ def insert_into_podcast_table(db: Connection, podcast: PodcastIn) -> None:
 
 @open_db
 def get_all_podcasts(db: Connection) -> List[Tuple]:
-    db.cursor().execute("SELECT * FROM podcasts")
-    return db.cursor().fetchall()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM podcasts")
+    return cursor.fetchall()
 
 
 @open_db
 def get_a_podcast_by_title(db: Connection, title: str) -> Tuple[int, str, str]:
-    db.cursor().execute("SELECT * FROM podcasts WHERE title=?", (title,))
-    return db.cursor().fetchone()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM podcasts WHERE title=?", (title,))
+    return cursor.fetchone()
 
 
 @open_db
@@ -57,4 +59,4 @@ def delete_a_podcast_by_title(db: Connection, title: str) -> None:
 
 
 if __name__ == "__main__":
-    create_podcasts_table(open_db())
+    create_podcasts_table()

@@ -14,11 +14,6 @@ def get_podcast_info_and_save_to_database(url):
     queries.insert_into_podcast_table(models.PodcastIn(title, url))
 
 
-def get_a_podcast_by_title(title):
-    pod = queries.get_a_podcast_by_title(title)
-    return models.PodcastOut(pod[0], pod[1], pod[2])
-
-
 def episode_has_audio_url(episode):
     return bool(parser.get_audio_urls(parser.get_entry_enclosures(episode)))
 
@@ -52,8 +47,13 @@ def download_episode(episode):
     return f"Download completed: {episode.title}"
 
 
+def _get_a_podcast_by_title(title):
+    pod = queries.get_a_podcast_by_title(title)
+    return models.PodcastOut(pod[0], pod[1], pod[2])
+
+
 def get_podcast_and_its_episode_from_title(podcast_title):
-    return get_all_episodes_from_feed(get_a_podcast_by_title(podcast_title).url)
+    return get_all_episodes_from_feed(_get_a_podcast_by_title(podcast_title).url)
 
 
 def delete_a_podcast_by_title(title):

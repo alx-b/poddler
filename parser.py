@@ -37,14 +37,6 @@ def get_podcast_title(parsed_url: FeedParserDict) -> str:
     return parsed_url.feed.title
 
 
-def get_podcast_description(parsed_url: FeedParserDict) -> str:
-    return parsed_url.feed.description
-
-
-def get_podcast_image_url(parsed_url: FeedParserDict) -> str:
-    return parsed_url.feed.image.url
-
-
 # Episode info
 
 
