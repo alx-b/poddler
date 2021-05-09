@@ -3,7 +3,7 @@ import feedparser
 from feedparser.util import FeedParserDict
 import pathlib
 
-from .. import parser
+from poddler import parser
 
 
 def get_path():

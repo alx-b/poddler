@@ -1,9 +1,10 @@
+import functools
 from typing import List, Tuple, Callable, Any
 import sqlite3
 
 # For the sake of shortening Type Annotation
 from sqlite3 import Connection, Cursor
-from models import PodcastIn
+from poddler.models import PodcastIn
 
 
 def open_db(func: Callable) -> Any:
@@ -15,15 +16,16 @@ def open_db(func: Callable) -> Any:
         Any: returns the result of whatever function
     """
 
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         with sqlite3.connect("podcasts.db") as db:
+            _create_podcasts_table(db)
             return func(db, *args, **kwargs)
 
     return wrapper
 
 
-@open_db
-def create_podcasts_table(db: Connection) -> None:
+def _create_podcasts_table(db: Connection) -> None:
     """If table podcasts doesn't exist, create it.
 
     Parameters:
@@ -98,6 +100,3 @@ def delete_a_podcast_by_title(db: Connection, title: str) -> None:
     """
     db.cursor().execute("DELETE FROM podcasts WHERE title=?", (title,))
     db.commit()
-
-
-create_podcasts_table()

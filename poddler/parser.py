@@ -1,4 +1,5 @@
 from typing import List, Dict, Optional, Iterable
+
 # Third Party
 import feedparser
 from feedparser.util import FeedParserDict
@@ -30,7 +31,7 @@ def get_parsed_url(url: str) -> Optional[FeedParserDict]:
     return _has_no_error(feedparser.parse(url))
 
 
-# Podcast overall info
+# Podcast info
 
 
 def get_podcast_title(parsed_url: FeedParserDict) -> str:
