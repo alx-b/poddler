@@ -11,10 +11,8 @@ class AppForm(npyscreen.Form):
     def afterEditing(self):
         self.parentApp.setNextForm(None)
 
-        
     def create(self) -> None:
-        """Initialization (equivalent to __init__)
-        """
+        """Initialization (equivalent to __init__)"""
         # Widgets:
         self.url = self.add(
             BoxUrl, height=3, contained_widget_arguments={"name": "url:"}
@@ -25,13 +23,10 @@ class AppForm(npyscreen.Form):
         # Keybindings:
         self.url.entry_widget.add_handlers({"^A": self.get_info})
         self.podcast.entry_widget.add_handlers({"^A": self.get_episode_list})
-        self.podcast.entry_widget.add_handlers(
-            {"^D": self.delete_selected_podcast}
-        )
+        self.podcast.entry_widget.add_handlers({"^D": self.delete_selected_podcast})
         self.episode.entry_widget.add_handlers({"^A": self.download_episodes})
 
         self.podcast.get_podcast_list()
-
 
     def get_info(self, *args) -> None:
         """Gets podcast info, saves to database, display podcasts
@@ -50,7 +45,6 @@ class AppForm(npyscreen.Form):
         self.status.display()
         self.podcast.get_podcast_list()
 
-
     def get_episode_list(self, *args) -> None:
         """Gets and display episodes of the selected podcast
 
@@ -67,7 +61,6 @@ class AppForm(npyscreen.Form):
             self.status.display()
         self.episode.value = []
 
-
     def delete_selected_podcast(self, *args) -> None:
         """Delete selected podcast and refresh podcast list
 
@@ -75,9 +68,7 @@ class AppForm(npyscreen.Form):
             *args: Needed for keybinding
         """
         try:
-            handler.delete_a_podcast_by_title(
-                self.podcast.get_selected_podcast_title()
-            )
+            handler.delete_a_podcast_by_title(self.podcast.get_selected_podcast_title())
         except IndexError:
             self.status.values.append("You haven't select a podcast!")
             self.status.display()
@@ -85,7 +76,6 @@ class AppForm(npyscreen.Form):
         self.podcast.value = []
         self.podcast.get_podcast_list()
 
-        
     def download_episodes(self, *args) -> None:
         """Start downloading thread
 
@@ -93,23 +83,27 @@ class AppForm(npyscreen.Form):
             *args: Needed for keybinding
         """
         threading.Thread(target=self._download_concurrently, daemon=True).start()
-        
 
     def _download_concurrently(self) -> None:
-        episodes = self.episode.entry_widget.get_selected_objects()
-        self.episode.value = []
-        self.episode.display()
-        with concurrent.futures.ThreadPoolExecutor() as tpexec:
-            # Use .submit with list comprehension instead of .map,
-            # else you get result in starting order
-            downloads = [tpexec.submit(handler.download_episode, ep) for ep in episodes]
-            for episode in episodes:
-                self.status.values.append(f"Download started: {episode.title}")
-            self.status.display()
-
-            for download in concurrent.futures.as_completed(downloads):
-                self.status.values.append(download.result())
+        try:
+            episodes = self.episode.entry_widget.get_selected_objects()
+            self.episode.value = []
+            self.episode.display()
+            with concurrent.futures.ThreadPoolExecutor() as tpexec:
+                # Use .submit with list comprehension instead of .map,
+                # else you get result in starting order
+                downloads = [
+                    tpexec.submit(handler.download_episode, ep) for ep in episodes
+                ]
+                for episode in episodes:
+                    self.status.values.append(f"Download started: {episode.title}")
                 self.status.display()
+
+                for download in concurrent.futures.as_completed(downloads):
+                    self.status.values.append(download.result())
+                    self.status.display()
+        except TypeError:
+            self.status.values.append("You haven't select any episodes!")
 
         self.status.display()
 
@@ -135,9 +129,7 @@ class BoxPodcast(npyscreen.BoxTitle):
         return self.entry_widget.get_selected_objects()[0]
 
     def get_podcast_list(self, *args):
-        self.values = [
-            podcast.title for podcast in handler.get_all_podcasts()
-        ]
+        self.values = [podcast.title for podcast in handler.get_all_podcasts()]
         self.display()
 
 
