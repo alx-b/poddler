@@ -100,11 +100,14 @@ class AppForm(npyscreen.Form):
                     tpexec.submit(handler.download_episode, ep) for ep in episodes
                 ]
                 for episode in episodes:
-                    self.status.values.append(f"Download started: {episode.title}")
+                    self.status.values.append(f"Downloading: {episode.title}")
                 self.status.display()
 
                 for download in concurrent.futures.as_completed(downloads):
-                    self.status.values.append(download.result())
+                    title = f"Downloading: {download.result()[6:]}"
+                    self.status.values[
+                        self.status.values.index(title)
+                    ] = download.result()
                     self.status.display()
         except TypeError:
             self.status.values.append("You haven't select any episodes!")
@@ -158,7 +161,7 @@ class BoxStatus(npyscreen.BoxTitle):
 class Application(npyscreen.NPSAppManaged):
     def onStart(self):
         npyscreen.setTheme(PoddlerTheme)
-        self.addForm("MAIN", AppForm, name="Poddler", color="LABEL")
+        self.addForm("MAIN", AppForm, name="Poddler", color="DEFAULT")
 
 
 class PoddlerTheme(npyscreen.ThemeManager):
@@ -167,7 +170,7 @@ class PoddlerTheme(npyscreen.ThemeManager):
         "FORMDEFAULT": "WHITE_BLACK",
         "NO_EDIT": "BLUE_BLACK",
         "STANDOUT": "CYAN_BLACK",
-        "CURSOR": "WHITE_BLACK",
+        "CURSOR": "BLUE_BLACK",
         "CURSOR_INVERSE": "BLACK_WHITE",
         "LABEL": "BLUE_BLACK",
         "LABELBOLD": "WHITE_BLACK",
