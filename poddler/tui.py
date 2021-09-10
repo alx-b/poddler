@@ -6,6 +6,8 @@ import npyscreen
 
 import handler
 
+# npyscreen.disableColor()
+
 
 class AppForm(npyscreen.Form):
     def afterEditing(self):
@@ -52,6 +54,8 @@ class AppForm(npyscreen.Form):
             *args: Needed for keybinding
         """
         try:
+            self.episode.values = ["Loading..."]
+            self.episode.display()
             self.episode.values = handler.get_podcast_and_its_episode_from_title(
                 self.podcast.get_selected_podcast_title()
             )
@@ -153,7 +157,32 @@ class BoxStatus(npyscreen.BoxTitle):
 
 class Application(npyscreen.NPSAppManaged):
     def onStart(self):
-        self.addForm("MAIN", AppForm, name="Poddler")
+        npyscreen.setTheme(PoddlerTheme)
+        self.addForm("MAIN", AppForm, name="Poddler", color="LABEL")
+
+
+class PoddlerTheme(npyscreen.ThemeManager):
+    default_colors = {
+        "DEFAULT": "WHITE_BLACK",
+        "FORMDEFAULT": "WHITE_BLACK",
+        "NO_EDIT": "BLUE_BLACK",
+        "STANDOUT": "CYAN_BLACK",
+        "CURSOR": "WHITE_BLACK",
+        "CURSOR_INVERSE": "BLACK_WHITE",
+        "LABEL": "BLUE_BLACK",
+        "LABELBOLD": "WHITE_BLACK",
+        "CONTROL": "BLUE_BLACK",
+        "IMPORTANT": "GREEN_BLACK",
+        "SAFE": "GREEN_BLACK",
+        "WARNING": "YELLOW_BLACK",
+        "DANGER": "RED_BLACK",
+        "CRITICAL": "BLACK_RED",
+        "GOOD": "GREEN_BLACK",
+        "GOODHL": "GREEN_BLACK",
+        "VERYGOOD": "BLACK_GREEN",
+        "CAUTION": "YELLOW_BLACK",
+        "CAUTIONHL": "BLACK_YELLOW",
+    }
 
 
 if __name__ == "__main__":

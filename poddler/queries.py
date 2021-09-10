@@ -4,7 +4,7 @@ import sqlite3
 
 # For the sake of shortening Type Annotation
 from sqlite3 import Connection, Cursor
-from poddler.models import PodcastIn
+from models import PodcastIn
 
 
 def open_db(func: Callable) -> Any:
