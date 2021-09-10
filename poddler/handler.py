@@ -24,7 +24,7 @@ def episode_has_audio_url(episode: FeedParserDict) -> bool:
 
 def download_episode(episode: Episode) -> str:
     downloader.download_file(episode)
-    return f"Download completed: {episode.title}"
+    return f"DONE: {episode.title}"
 
 
 def _get_a_podcast_by_title(title: str) -> PodcastOut:
