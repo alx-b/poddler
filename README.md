@@ -10,7 +10,7 @@ Python (feedparser, npyscreen, httpx)
 3. python tui.py
 
 ## Screenshots
-![](screenshots/poddler.png)
+![](screenshots/poddler2.png)
 
 ## Features
 - Add rssfeed url.
